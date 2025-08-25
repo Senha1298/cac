@@ -89,12 +89,13 @@
         border: 1px solid #e5e7eb;
         border-radius: 0.5rem;
         transition: all 0.2s;
-        height: 3.5rem; /* Fixed height for all options */
+        min-height: 3.5rem; /* Minimum height, allows expansion */
         width: 100%; /* Fixed width for all options */
         display: flex;
         align-items: center;
         padding: 0.75rem 1rem;
         box-sizing: border-box;
+        line-height: 1.4; /* Better line spacing for text */
     }
 
     .option-button:hover {
@@ -225,7 +226,7 @@
         `;
         question.options.forEach((option, i) => {
             html += `
-                <div class="flex items-center p-1">
+                <div class="flex items-center p-1 mb-2">
                     <input type="radio" id="q${index}_option${i}" name="q${index}" value="${option}" class="radio-button hidden">
                     <label for="q${index}_option${i}" class="option-button flex items-center w-full cursor-pointer text-base p-2">
                         <div class="checkbox-custom"></div>
