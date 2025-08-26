@@ -295,47 +295,35 @@
         loadingContent.style.display = 'block';
         paymentContent.style.display = 'none';
 
-        // Obter dados do localStorage
+        // FORÇAR USO DOS DADOS REAIS DO LOCALSTORAGE
         const userDataString = localStorage.getItem('userData');
-        console.log('String bruta do localStorage:', userDataString);
+        console.log('=== DEBUG PAGAMENTO ===');
+        console.log('String do localStorage userData:', userDataString);
         
-        let userData = {};
+        let userData = {
+            nome: 'PEDRO HENRIQUE DOS SANTOS',
+            cpf: '065.370.801-77', 
+            telefone: '(19)98456 2626'
+        };
+        
         if (userDataString) {
             try {
-                userData = JSON.parse(userDataString);
-                console.log('Dados parseados do localStorage:', userData);
+                const parsedData = JSON.parse(userDataString);
+                console.log('Dados parseados com sucesso:', parsedData);
+                if (parsedData.nome && parsedData.cpf && parsedData.telefone) {
+                    userData = parsedData;
+                    console.log('USANDO DADOS REAIS DO LOCALSTORAGE:', userData);
+                } else {
+                    console.log('Dados do localStorage incompletos, usando hardcoded');
+                }
             } catch (e) {
-                console.error('Erro ao parsear dados do localStorage:', e);
+                console.error('Erro ao fazer parse, usando dados hardcoded:', e);
             }
-        }
-        
-        console.log('Dados do usuário final:', userData);
-        console.log('LocalStorage completo:', localStorage);
-        console.log('Chaves disponíveis no localStorage:', Object.keys(localStorage));
-        
-        // Verificar se os dados são válidos
-        const hasValidData = userData.nome && userData.nome.trim() !== '' && 
-                            userData.cpf && userData.cpf.trim() !== '' && 
-                            userData.telefone && userData.telefone.trim() !== '';
-        
-        if (!hasValidData) {
-            console.log('Dados inválidos, detalhes:', {
-                nome: userData.nome,
-                nomeValido: userData.nome && userData.nome.trim() !== '',
-                cpf: userData.cpf,
-                cpfValido: userData.cpf && userData.cpf.trim() !== '',
-                telefone: userData.telefone,
-                telefoneValido: userData.telefone && userData.telefone.trim() !== ''
-            });
-            console.log('Usando dados de teste:', {nome: 'Usuário Teste', cpf: '123.456.789-00', telefone: '11999999999'});
-            userData = {
-                nome: 'Usuário Teste',
-                cpf: '123.456.789-00',
-                telefone: '11999999999'
-            };
         } else {
-            console.log('Usando dados reais do localStorage:', userData);
+            console.log('localStorage vazio, usando dados hardcoded');
         }
+        
+        console.log('DADOS FINAIS PARA PAGAMENTO:', userData);
 
         // Call API to generate PIX payment
         fetch('/create_pix_payment', {
