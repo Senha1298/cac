@@ -317,15 +317,14 @@ def process_payment():
         data = request.get_json()
         app.logger.info(f"Dados recebidos para pagamento: {data}")
         
-        # Gerar email aleatório
-        random_chars = ''.join(random.choices(string.ascii_lowercase, k=8))
-        random_email = f"{random_chars}@email.com"
+        # Usar email fixo profissional em vez de aleatório
+        professional_email = "contato@certificadocac.com.br"
         
         # Preparar dados para pagamento
         customer_data = {
             'nome': data.get('nome', ''),
             'cpf': data.get('cpf', ''),
-            'email': random_email,
+            'email': professional_email,
             'phone': data.get('telefone', '')
         }
         

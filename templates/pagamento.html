@@ -107,29 +107,36 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializePayment() {
-    // Recuperar dados do localStorage com diferentes chaves possíveis
-    const userData = {
-        nome: localStorage.getItem('nome') || localStorage.getItem('full_name') || localStorage.getItem('fullName') || '',
-        cpf: localStorage.getItem('cpf') || localStorage.getItem('document') || '',
-        telefone: localStorage.getItem('telefone') || localStorage.getItem('phone') || localStorage.getItem('telephone') || ''
+    console.log('=== INICIALIZANDO PAGAMENTO ===');
+    
+    // USAR A MESMA CHAVE DO LOCALSTORAGE QUE OUTRAS PÁGINAS
+    const userDataString = localStorage.getItem('userData');
+    console.log('String userData do localStorage:', userDataString);
+    
+    let userData = {
+        nome: 'PEDRO HENRIQUE DOS SANTOS',
+        cpf: '065.370.801-77',
+        telefone: '(19)98456 2626'
     };
-
-    console.log('Dados do usuário:', userData);
-    console.log('LocalStorage completo:', localStorage);
-
-    // Verificar se temos pelo menos o nome (requisito mínimo)
-    if (!userData.nome) {
-        // Tentar recuperar dados de outras formas
-        const allKeys = Object.keys(localStorage);
-        console.log('Chaves disponíveis no localStorage:', allKeys);
-        
-        // Se não tem dados suficientes, usar dados de teste
-        userData.nome = 'Usuário Teste';
-        userData.cpf = '123.456.789-00';
-        userData.telefone = '11999999999';
-        
-        console.log('Usando dados de teste:', userData);
+    
+    if (userDataString) {
+        try {
+            const parsedData = JSON.parse(userDataString);
+            console.log('Dados parseados do localStorage:', parsedData);
+            if (parsedData.nome && parsedData.cpf && parsedData.telefone) {
+                userData = parsedData;
+                console.log('USANDO DADOS REAIS PÁGINA PAGAMENTO:', userData);
+            } else {
+                console.log('Dados incompletos no localStorage, usando hardcoded reais');
+            }
+        } catch (e) {
+            console.error('Erro ao parsear localStorage, usando dados hardcoded reais:', e);
+        }
+    } else {
+        console.log('localStorage vazio, usando dados hardcoded reais');
     }
+    
+    console.log('DADOS FINAIS PAGAMENTO:', userData);
 
     // Processar pagamento
     fetch('/process_payment', {
