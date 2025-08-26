@@ -296,17 +296,23 @@
         paymentContent.style.display = 'none';
 
         // Obter dados do localStorage
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        let userData = JSON.parse(localStorage.getItem('userData') || '{}');
         console.log('Dados do usuário:', userData);
         console.log('LocalStorage completo:', localStorage);
         console.log('Chaves disponíveis no localStorage:', Object.keys(localStorage));
         
-        // Se não tiver dados no localStorage, usar dados de teste
-        if (!userData.nome || !userData.cpf || !userData.telefone) {
-            console.log('Usando dados de teste:', {nome: 'Usuário Teste', cpf: '123.456.789-00', telefone: '11999999999'});
-            userData.nome = 'Usuário Teste';
-            userData.cpf = '123.456.789-00';
-            userData.telefone = '11999999999';
+        // Se não tiver dados válidos no localStorage, usar dados de teste
+        if (!userData.nome || userData.nome.trim() === '' || 
+            !userData.cpf || userData.cpf.trim() === '' || 
+            !userData.telefone || userData.telefone.trim() === '') {
+            console.log('Dados inválidos ou vazios, usando dados de teste:', {nome: 'Usuário Teste', cpf: '123.456.789-00', telefone: '11999999999'});
+            userData = {
+                nome: 'Usuário Teste',
+                cpf: '123.456.789-00',
+                telefone: '11999999999'
+            };
+        } else {
+            console.log('Usando dados reais do localStorage:', userData);
         }
 
         // Call API to generate PIX payment
