@@ -300,11 +300,7 @@
         console.log('=== DEBUG PAGAMENTO ===');
         console.log('String do localStorage userData:', userDataString);
         
-        let userData = {
-            nome: 'PEDRO HENRIQUE DOS SANTOS',
-            cpf: '065.370.801-77', 
-            telefone: '(19)98456 2626'
-        };
+        let userData = null;
         
         if (userDataString) {
             try {
@@ -314,13 +310,29 @@
                     userData = parsedData;
                     console.log('USANDO DADOS REAIS DO LOCALSTORAGE:', userData);
                 } else {
-                    console.log('Dados do localStorage incompletos, usando hardcoded');
+                    console.error('ERRO: Dados do localStorage incompletos');
+                    alert('Erro: Dados do usuário incompletos. Redirecionando para o início.');
+                    window.location.href = '/';
+                    return;
                 }
             } catch (e) {
-                console.error('Erro ao fazer parse, usando dados hardcoded:', e);
+                console.error('ERRO: Falha ao fazer parse do localStorage:', e);
+                alert('Erro: Dados corrompidos. Redirecionando para o início.');
+                window.location.href = '/';
+                return;
             }
         } else {
-            console.log('localStorage vazio, usando dados hardcoded');
+            console.error('ERRO: localStorage vazio');
+            alert('Erro: Nenhum dado encontrado. Redirecionando para o início.');
+            window.location.href = '/';
+            return;
+        }
+        
+        if (!userData) {
+            console.error('ERRO: userData é null');
+            alert('Erro: Falha ao carregar dados. Redirecionando para o início.');
+            window.location.href = '/';
+            return;
         }
         
         console.log('DADOS FINAIS PARA PAGAMENTO:', userData);
