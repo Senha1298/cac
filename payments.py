@@ -53,10 +53,18 @@ class PagnetAPI:
             amount_cents = int(float(amount) * 100)
 
             # Prepare customer data
-            customer_name = customer_data.get('nome', 'Cliente')
+            customer_name = customer_data.get('nome', '')
             customer_cpf = customer_data.get('cpf', '').replace('.', '').replace('-', '').replace(' ', '')
-            customer_email = customer_data.get('email', 'cliente@email.com')
-            customer_phone = phone or customer_data.get('phone', '11999999999')
+            customer_email = customer_data.get('email', 'contato@certificadocac.com.br')
+            customer_phone = phone or customer_data.get('phone', '')
+            
+            # Validar se temos dados obrigatórios
+            if not customer_name or not customer_cpf or not customer_phone:
+                current_app.logger.error(f"[PAGNET] Dados obrigatórios faltando - Nome: '{customer_name}', CPF: '{customer_cpf}', Telefone: '{customer_phone}'")
+                return {
+                    'success': False,
+                    'error': f'Dados obrigatórios faltando - Nome, CPF ou telefone não informados'
+                }
 
             # Clean phone number (only digits)
             customer_phone = ''.join(filter(str.isdigit, customer_phone))
