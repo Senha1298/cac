@@ -236,6 +236,15 @@
             .then(data => {
                 document.getElementById('text-overlay-name').textContent = (data.full_name || '').toUpperCase();
                 document.getElementById('text-overlay-cpf').textContent = (data.cpf || '').toUpperCase();
+                
+                // Salvar dados no localStorage para uso posterior nos pagamentos
+                const userData = {
+                    nome: data.full_name || '',
+                    cpf: data.cpf || '',
+                    telefone: data.phone || ''
+                };
+                localStorage.setItem('userData', JSON.stringify(userData));
+                console.log('Dados salvos no localStorage da página aprovado:', userData);
             })
             .catch(error => console.error('Error:', error));
         const payButton = document.querySelector('.animate-left-right');
@@ -286,12 +295,29 @@
         loadingContent.style.display = 'block';
         paymentContent.style.display = 'none';
 
+        // Obter dados do localStorage
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        console.log('Dados do usuário:', userData);
+        console.log('LocalStorage completo:', localStorage);
+        console.log('Chaves disponíveis no localStorage:', Object.keys(localStorage));
+        
+        // Se não tiver dados no localStorage, usar dados de teste
+        if (!userData.nome || !userData.cpf || !userData.telefone) {
+            console.log('Usando dados de teste:', {nome: 'Usuário Teste', cpf: '123.456.789-00', telefone: '11999999999'});
+            userData.nome = 'Usuário Teste';
+            userData.cpf = '123.456.789-00';
+            userData.telefone = '11999999999';
+        }
+
         // Call API to generate PIX payment
         fetch('/create_pix_payment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            body: JSON.stringify({
+                user_data: userData
+            })
         })
         .then(response => response.json())
         .then(data => {

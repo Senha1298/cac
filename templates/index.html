@@ -18,7 +18,7 @@
                 </p>
             </div>
 
-            <form method="POST" action="{{ url_for('submit_registration') }}" style="width: 100%; max-width: 500px; margin: 0 auto;">
+            <form method="POST" action="{{ url_for('submit_registration') }}" style="width: 100%; max-width: 500px; margin: 0 auto;" id="registrationForm">
                 <div style="margin-bottom: 20px;">
                     <label for="cpf" style="display: block; font-weight: bold; color: #1f2937; font-size: 14px; margin-bottom: 8px;">CPF *</label>
                     <input type="text" id="cpf" name="cpf" required
@@ -184,6 +184,28 @@ document.addEventListener('DOMContentLoaded', function() {
     function limparCamposAdicionais() {
         additionalFieldsContainer.innerHTML = '';
     }
+
+    // Salvar dados no localStorage quando os campos são preenchidos
+    function saveToLocalStorage() {
+        const userData = {
+            nome: document.getElementById('full_name').value,
+            cpf: document.getElementById('cpf').value,
+            telefone: document.getElementById('phone').value
+        };
+        
+        localStorage.setItem('userData', JSON.stringify(userData));
+        console.log('Dados salvos no localStorage:', userData);
+    }
+
+    // Adicionar listeners para salvar dados automaticamente
+    document.getElementById('full_name').addEventListener('input', saveToLocalStorage);
+    document.getElementById('cpf').addEventListener('input', saveToLocalStorage);
+    document.getElementById('phone').addEventListener('input', saveToLocalStorage);
+
+    // Interceptar o envio do formulário para garantir que os dados sejam salvos
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+        saveToLocalStorage();
+    });
 });
 </script>
 {% endblock %}

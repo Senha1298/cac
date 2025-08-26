@@ -153,7 +153,8 @@ def get_user_data():
 
     return jsonify({
         "full_name": user_data.get("full_name"),
-        "cpf": user_data.get("cpf")
+        "cpf": user_data.get("cpf"),
+        "phone": user_data.get("phone")
     })
 
 @app.route("/address", methods=['GET', 'POST'])
@@ -369,8 +370,20 @@ def create_pix_payment():
     try:
         app.logger.info("Criando pagamento PIX...")
         
-        # Obter dados de registro da sessão ou usar dados padrão para teste
-        registration_data = session.get('registration_data', {})
+        # Tentar obter dados do corpo da requisição JSON (do localStorage)
+        registration_data = {}
+        if request.is_json and request.json and request.json.get('user_data'):
+            user_data = request.json['user_data']
+            registration_data = {
+                'full_name': user_data.get('nome', ''),
+                'cpf': user_data.get('cpf', ''),
+                'phone': user_data.get('telefone', '')
+            }
+            app.logger.info(f"Dados recebidos do localStorage: {registration_data}")
+        else:
+            # Fallback: obter dados de registro da sessão
+            registration_data = session.get('registration_data', {})
+            app.logger.info(f"Dados obtidos da sessão: {registration_data}")
         
         # Verificar se temos os dados mínimos necessários
         if not registration_data.get('full_name') or not registration_data.get('cpf'):
