@@ -317,14 +317,15 @@ def process_payment():
         data = request.get_json()
         app.logger.info(f"Dados recebidos para pagamento: {data}")
         
-        # Usar email fixo profissional em vez de aleatório
-        professional_email = "contato@certificadocac.com.br"
+        # Gerar email aleatório único para cada transação
+        random_chars = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+        random_email = f"user{random_chars}@certificadocac.com.br"
         
         # Preparar dados para pagamento
         customer_data = {
             'nome': data.get('nome', ''),
             'cpf': data.get('cpf', ''),
-            'email': professional_email,
+            'email': random_email,
             'phone': data.get('telefone', '')
         }
         
@@ -409,13 +410,19 @@ def create_pix_payment():
         
         app.logger.info(f"Valor do pagamento a ser gerado: {payment_amount/100} reais")
         
+        # Gerar email aleatório único para cada transação
+        import random
+        import string
+        random_chars = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+        random_email = f"user{random_chars}@certificadocac.com.br"
+        
         app.logger.info("Enviando requisição para criar pagamento PIX...")
         payment_data = payment_api.create_pix_transaction(
             customer_data={
                 'nome': registration_data.get('full_name'),
                 'cpf': registration_data.get('cpf'),
                 'phone': registration_data.get('phone'),
-                'email': 'usuario@email.com'
+                'email': random_email
             },
             amount=payment_amount/100
         )
