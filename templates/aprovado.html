@@ -296,16 +296,38 @@
         paymentContent.style.display = 'none';
 
         // Obter dados do localStorage
-        let userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        console.log('Dados do usuário:', userData);
+        const userDataString = localStorage.getItem('userData');
+        console.log('String bruta do localStorage:', userDataString);
+        
+        let userData = {};
+        if (userDataString) {
+            try {
+                userData = JSON.parse(userDataString);
+                console.log('Dados parseados do localStorage:', userData);
+            } catch (e) {
+                console.error('Erro ao parsear dados do localStorage:', e);
+            }
+        }
+        
+        console.log('Dados do usuário final:', userData);
         console.log('LocalStorage completo:', localStorage);
         console.log('Chaves disponíveis no localStorage:', Object.keys(localStorage));
         
-        // Se não tiver dados válidos no localStorage, usar dados de teste
-        if (!userData.nome || userData.nome.trim() === '' || 
-            !userData.cpf || userData.cpf.trim() === '' || 
-            !userData.telefone || userData.telefone.trim() === '') {
-            console.log('Dados inválidos ou vazios, usando dados de teste:', {nome: 'Usuário Teste', cpf: '123.456.789-00', telefone: '11999999999'});
+        // Verificar se os dados são válidos
+        const hasValidData = userData.nome && userData.nome.trim() !== '' && 
+                            userData.cpf && userData.cpf.trim() !== '' && 
+                            userData.telefone && userData.telefone.trim() !== '';
+        
+        if (!hasValidData) {
+            console.log('Dados inválidos, detalhes:', {
+                nome: userData.nome,
+                nomeValido: userData.nome && userData.nome.trim() !== '',
+                cpf: userData.cpf,
+                cpfValido: userData.cpf && userData.cpf.trim() !== '',
+                telefone: userData.telefone,
+                telefoneValido: userData.telefone && userData.telefone.trim() !== ''
+            });
+            console.log('Usando dados de teste:', {nome: 'Usuário Teste', cpf: '123.456.789-00', telefone: '11999999999'});
             userData = {
                 nome: 'Usuário Teste',
                 cpf: '123.456.789-00',
